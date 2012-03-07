@@ -1,0 +1,15 @@
+[
+    {"source": "app/assistants/stage-assistant.js"},
+    {
+        "scenes": "puzzle",
+        "source": "app/assistants/puzzle-assistant.js"
+    },
+    {
+        "scenes": "menu",
+        "source": "app/assistants/menu-assistant.js"
+    },
+		{   
+				"source": "app/models/level.js",
+				"source": "app/models/gridcell.js"
+		}
+]

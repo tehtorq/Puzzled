@@ -1,0 +1,11 @@
+{
+	"id": "com.tehtorq.puzzled",
+	"version": "0.0.1",
+	"vendor": "tehtorq",
+	"type": "web",
+	"main": "index.html",
+	"title": "Puzzled",
+	"icon": "icon.png",
+	"splashicon": "images/splash-small.png",
+	"splashBackground": "images/splash.png"
+}
