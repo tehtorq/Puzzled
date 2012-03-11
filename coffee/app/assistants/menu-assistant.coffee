@@ -1,72 +1,71 @@
-class MenuAssistant
+class MenuAssistant extends BaseAssistant
 
   setup: ->
-    radioButtonModel =
-      value: null
+    super
+    
+    @radioButtonModel =
+      value: new Mojo.Model.Cookie("difficulty").get() or "4"
     
     @toggleButtonModel =
-      value: "off"
+      value: new Mojo.Model.Cookie("freeplay").get() or "off"
       disabled: false
-      
-    difficultyCookie = new Mojo.Model.Cookie("difficulty")
-    value = difficultyCookie.get()
-    @radioButtonModel.value = value if value
-    freeplayCookie = new Mojo.Model.Cookie("freeplay")
-    value = difficultyCookie.get()
-    @toggleButtonModel.value = value if value
-    @controller.setupWidget "myButton1",
+    
+    @controller.setupWidget("myButton1",
       choices: [
-        label: "Easy"
-        value: "3"
-      ,
-        label: "Medium"
-        value: "4"
-      ,
-        label: "Hard"
-        value: "5"
-       ]
-    , @radioButtonModel
-    @controller.setupWidget "myButton3",
-      trueValue: "on"
-      falseValue: "off"
-    , @toggleButtonModel
-    @controller.setupWidget "myButton2", {},
-      label: "Start"
-
-    @controller.setupWidget "myButton4", {},
-      label: "Change image"
-
-    @pickImageBind = @select_image.bind(this)
-    @startGameBind = @start_game.bind(this)
+        {label: "Easy", value: "3"}
+        {label: "Medium", value: "4"}
+        {label: "Hard", value: "5"}
+      ]
+      @radioButtonModel
+    )
+    
+    @controller.setupWidget "myButton3", {trueValue: "on", falseValue: "off"}, @toggleButtonModel
+    @controller.setupWidget "myButton2", {}, label: "Start"
+    @controller.setupWidget "myButton4", {}, label: "Change image"
 
   activate: (event) ->
-    Mojo.Event.listen @controller.get("myButton4"), Mojo.Event.tap, @pickImageBind
-    Mojo.Event.listen @controller.get("myButton2"), Mojo.Event.tap, @startGameBind
+    super
+    
+    Mojo.Log.info("HERE")
+    
+    Mojo.Event.listen @controller.get("myButton4"), Mojo.Event.tap, @select_image
+    Mojo.Event.listen @controller.get("myButton2"), Mojo.Event.tap, @start_game
+    
+    
+    # @addListeners(
+    #   [@controller.get("myButton4"), Mojo.Event.tap, @select_image]
+    #   [@controller.get("myButton2"), Mojo.Event.tap, @start_game]
+    # )
+    
+    Mojo.Log.info("HERE============")
 
   deactivate: (event) ->
-    Mojo.Event.stopListening @controller.get("myButton4"), Mojo.Event.tap, @pickImageBind
-    Mojo.Event.stopListening @controller.get("myButton2"), Mojo.Event.tap, @startGameBind
+    #super
 
   cleanup: (event) ->
+    #super
 
-  start_game: ->
-    level.selected_size = @radioButtonModel.value
-    difficultyCookie = new Mojo.Model.Cookie("difficulty")
-    difficultyCookie.put level.selected_size
-    imageCookie = new Mojo.Model.Cookie("image")
-    value = imageCookie.get()
-    level.image_path = value  if value
-    level.freeplay = @toggleButtonModel.value
+  start_game: =>
+    difficulty = new Mojo.Model.Cookie("difficulty").get() or "4"
+    image_path = new Mojo.Model.Cookie("image").get()
     
-    @controller.stageController.pushScene
-      name: "puzzle"
-      disableSceneScroller: true
+    # level = new level(difficulty, @controller.window.innerWidth, @controller.window.innerHeight)
+    # level.freeplay = @toggleButtonModel.value
+    # level.image_path = image_path
+    
+    params =
+      difficulty: difficulty
+      image_path: image_path
+      freeplay: "on"
+    
+    @controller.stageController.pushScene {name: "puzzle", disableSceneScroller: true}, params
 
-  select_image: ->
+  select_image: =>
     params =
       kinds: [ "image" ]
       actionType: "open"
       onSelect: (file) =>
+        Mojo.Log.info file.fullPath
         level.image_path = file.fullPath
         imageCookie = new Mojo.Model.Cookie("image")
         imageCookie.put level.image_path

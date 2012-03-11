@@ -1,5 +1,11 @@
 [
+    {"source": "app/models/banner.js"},
+    {"source": "app/lib/underscore-min.js"},
+    {"source": "app/models/slot.js"},
+    {"source": "app/models/tile.js"},
+    {"source": "app/models/level.js"},
     {"source": "app/assistants/stage-assistant.js"},
+    {"source": "app/assistants/base-assistant.js"},
     {
         "scenes": "puzzle",
         "source": "app/assistants/puzzle-assistant.js"
@@ -8,8 +14,4 @@
         "scenes": "menu",
         "source": "app/assistants/menu-assistant.js"
     },
-		{   
-				"source": "app/models/level.js",
-				"source": "app/models/gridcell.js"
-		}
 ]

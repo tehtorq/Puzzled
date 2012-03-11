@@ -6,6 +6,7 @@
 	"main": "index.html",
 	"title": "Puzzled",
 	"icon": "icon.png",
+	"uirevision": "2",
 	"splashicon": "images/splash-small.png",
 	"splashBackground": "images/splash.png"
 }

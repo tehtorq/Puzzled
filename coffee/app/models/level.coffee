@@ -1,53 +1,41 @@
-class level
+class Level
 
   constructor: (size, width, height) ->
-    @tiles = new Array(size * size)
-    @width = width
-    @height = height
+    @slot_count = size * size
+    @width = Math.floor(width / size) * size
+    @height = Math.floor(height / size) * size
     
-    @selected_size = null
+    @slots = _.map _.range(size * size), (i) =>
+      new Slot(@, i)
+      
+    @tiles = _.map @slots, (slot) =>
+      new Tile(slot) 
+    
     @image_path = null
     @freeplay = null
-    
-    i = 0
-
-    while i < @tiles.length
-      @tiles[i] = i
-      i++
-      
-    @selected_tile = 0
-    
-  getHeight: ->
-    @height
-
-  getWidth: ->
-    @width
+    @selected_tile = null
 
   is_sorted: ->
-    i = 0
-
-    while i < @tiles.length
-      return false  unless @tiles[i] is i
-      i++
-    
-    true
+    _.all @tiles, (tile) ->
+      tile.inOriginalPosition()
 
   row_count: ->
-    Math.sqrt @tiles.length
+    Math.sqrt @slot_count
 
   column_count: ->
-    Math.sqrt @tiles.length
+    Math.sqrt @slot_count
 
   select_tile: (tile) ->
     @swap_tiles tile, @selected_tile
     @selected_tile = tile
 
-  swap_tiles: (x, y) ->
-    temp1 = @tiles[x]
-    temp2 = @tiles[y]
-    @tiles[x] = temp2
-    @tiles[y] = temp1
-
+  swap_tiles: (first_tile, second_tile) ->
+    slot1 = first_tile.slot
+    slot2 = second_tile.slot
+    
+    second_tile.slot = slot1
+    first_tile.slot = slot2
+  
   possible_moves: (tile) ->
     row_length = @column_count()
     possible_moves = []
@@ -74,3 +62,21 @@ class level
       i++
   
     valid_moves
+
+  shuffle: (iterations) ->
+    tile = 0
+    i = 0
+
+    while i < iterations
+      valid_moves = @possible_moves(tile)
+      choice = Math.floor(Math.random() * (valid_moves.length + 1))
+      choice = choice - 1  if choice is valid_moves.length
+      @level.swap_tiles valid_moves[choice], tile
+      tile = valid_moves[choice]
+      i++
+
+  slot_for_coords: (x, y) ->
+    _.first(_.select @slots, (slot) -> slot.contains(x, y))
+          
+  tile_for_coords: (x, y) ->
+    _.first(_.select @tiles, (tile) -> tile.contains(x, y))
